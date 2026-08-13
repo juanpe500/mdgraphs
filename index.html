@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MDGraph — Animated Markdown Diagrams</title>
+<meta name="description" content="Standalone, zero-dependency JavaScript library that turns Markdown-style graph definitions into animated SVG diagrams for presentations and documentation.">
+<style>
+  :root{
+    --bg:#0b1020; --panel:#141a2e; --panel-2:#1b2238; --line:#2a3252;
+    --text:#e2e8f0; --sub:#94a3b8; --accent:#7c8cff; --accent-2:#22d3ee;
+    --radius:14px; --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --sans:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  }
+  html[data-theme="light"]{
+    --bg:#f4f6fb; --panel:#ffffff; --panel-2:#eef2ff; --line:#dbe1ee;
+    --text:#0f172a; --sub:#475569; --accent:#6366f1; --accent-2:#0ea5e9;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);
+    -webkit-font-smoothing:antialiased;line-height:1.5}
+  a{color:var(--accent)}
+  header.hero{padding:56px 24px 30px;text-align:center;
+    background:radial-gradient(1200px 400px at 50% -120px,rgba(124,140,255,.22),transparent)}
+  .badge{display:inline-block;font:600 12px var(--mono);letter-spacing:.14em;text-transform:uppercase;
+    color:var(--accent-2);background:rgba(34,211,238,.1);padding:5px 12px;border-radius:999px;margin-bottom:16px}
+  h1{margin:0;font-size:clamp(34px,6vw,60px);font-weight:800;letter-spacing:-.02em;
+    background:linear-gradient(120deg,var(--text),var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .tagline{margin:14px auto 0;max-width:640px;color:var(--sub);font-size:18px}
+  .cta{margin-top:26px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .btn{border:1px solid var(--line);background:var(--panel);color:var(--text);
+    padding:11px 20px;border-radius:11px;font:600 14px var(--sans);cursor:pointer;text-decoration:none;
+    transition:transform .12s,border-color .2s,background .2s}
+  .btn:hover{transform:translateY(-2px);border-color:var(--accent)}
+  .btn.primary{background:linear-gradient(120deg,var(--accent),var(--accent-2));border:none;color:#fff}
+  main{max-width:1240px;margin:0 auto;padding:0 20px 80px}
+  .studio{display:grid;grid-template-columns:minmax(320px,440px) 1fr;gap:18px;margin-top:20px}
+  @media(max-width:900px){.studio{grid-template-columns:1fr}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+  .card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;
+    padding:12px 14px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+  .card-head h3{margin:0;font-size:14px;color:var(--sub);font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+  textarea#src{width:100%;height:420px;resize:vertical;border:none;outline:none;padding:16px;
+    background:transparent;color:var(--text);font:13px/1.6 var(--mono);tab-size:2}
+  .preview{height:520px;padding:0}
+  #stage{width:100%;height:100%}
+  select,.mini{background:var(--panel-2);color:var(--text);border:1px solid var(--line);
+    border-radius:9px;padding:7px 10px;font:600 13px var(--sans);cursor:pointer}
+  .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .examples{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 0}
+  .chip{border:1px solid var(--line);background:var(--panel);color:var(--sub);
+    padding:7px 13px;border-radius:999px;font:600 12.5px var(--sans);cursor:pointer;transition:.15s}
+  .chip:hover,.chip.active{border-color:var(--accent);color:var(--text)}
+  section.docs{margin-top:70px}
+  section.docs h2{font-size:28px;margin:0 0 8px;letter-spacing:-.01em}
+  section.docs p.lead{color:var(--sub);max-width:760px}
+  .grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:24px}
+  .feat{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
+  .feat .ico{font-size:26px;margin-bottom:8px}
+  .feat h4{margin:0 0 6px;font-size:16px}
+  .feat p{margin:0;color:var(--sub);font-size:14px}
+  pre.code{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+    padding:16px;overflow:auto;font:12.5px/1.6 var(--mono);color:var(--text)}
+  pre.code .c{color:var(--sub)} pre.code .k{color:var(--accent-2)} pre.code .s{color:#7ee787}
+  table.ref{width:100%;border-collapse:collapse;margin-top:14px;font-size:13.5px}
+  table.ref th,table.ref td{border:1px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top}
+  table.ref th{background:var(--panel-2)}
+  table.ref code{font:12px var(--mono);color:var(--accent-2)}
+  footer{text-align:center;padding:40px 20px;color:var(--sub);border-top:1px solid var(--line)}
+  .toggle-theme{position:fixed;top:16px;right:16px;z-index:20}
+  .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin-top:24px}
+  .gallery .card{height:340px;display:flex;flex-direction:column}
+  .gallery .stage{flex:1;min-height:0}
+</style>
+</head>
+<body>
+  <button class="btn toggle-theme" id="themeToggle">☾ / ☀</button>
+
+  <header class="hero">
+    <span class="badge">Zero dependencies · One file</span>
+    <h1>MDGraph</h1>
+    <p class="tagline">Turn Markdown-style graph definitions into <strong>animated SVG diagrams</strong> —
+      flowcharts, decision trees, pipelines and tables that play like a presentation.</p>
+    <div class="cta">
+      <a class="btn primary" href="#studio">Open the studio</a>
+      <a class="btn" href="https://github.com/juanpe500/mdgraphs" id="repoLink">GitHub ↗</a>
+      <a class="btn" href="#docs">Docs</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- STUDIO -->
+    <div id="studio" class="studio">
+      <div class="card">
+        <div class="card-head">
+          <h3>Source</h3>
+          <div class="row">
+            <select id="theme">
+              <option value="dark">Dark</option>
+              <option value="light">Light</option>
+              <option value="neon">Neon</option>
+              <option value="blueprint">Blueprint</option>
+              <option value="mono">Mono</option>
+            </select>
+            <button class="mini" id="renderBtn">▶ Render</button>
+          </div>
+        </div>
+        <textarea id="src" spellcheck="false"></textarea>
+        <div style="padding:10px 14px">
+          <div class="examples" id="examples"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <h3>Preview</h3>
+          <div class="row">
+            <button class="mini" id="exportSvg">⬇ SVG</button>
+            <button class="mini" id="copyEmbed">⧉ Copy embed</button>
+          </div>
+        </div>
+        <div class="preview"><div id="stage"></div></div>
+      </div>
+    </div>
+
+    <!-- FEATURES -->
+    <section class="docs">
+      <h2>Everything for a living diagram</h2>
+      <p class="lead">Built for slide decks and documentation: the AI writes the graph, MDGraph renders and animates it.</p>
+      <div class="grid3">
+        <div class="feat"><div class="ico">🌊</div><h4>Directional flow</h4><p>Animate a glowing particle along any edge — forward, backward or bidirectional, with custom duration and color.</p></div>
+        <div class="feat"><div class="ico">🎬</div><h4>Step timeline</h4><p>Reveal the diagram step by step with captions, a scrubber, speed control and keyboard shortcuts.</p></div>
+        <div class="feat"><div class="ico">🧩</div><h4>Auto layout</h4><p>Layered Sugiyama-style layout with crossing reduction. No manual coordinates — just the graph.</p></div>
+        <div class="feat"><div class="ico">🎨</div><h4>Themeable</h4><p>Five built-in themes plus full CSS-variable / options overrides. Light and dark ready.</p></div>
+        <div class="feat"><div class="ico">📐</div><h4>Rich shapes</h4><p>Rectangles, rounded, stadium, circle, diamond, hexagon, cylinder, subroutine, flag — mermaid-compatible.</p></div>
+        <div class="feat"><div class="ico">📊</div><h4>Tables too</h4><p>Markdown pipe tables render alongside graphs and animate row by row for reveals.</p></div>
+      </div>
+    </section>
+
+    <!-- GALLERY -->
+    <section class="docs">
+      <h2>Gallery</h2>
+      <p class="lead">Each of these auto-plays its animation. Click a card to focus and use the controls.</p>
+      <div class="gallery" id="gallery"></div>
+    </section>
+
+    <!-- DOCS -->
+    <section class="docs" id="docs">
+      <h2>Quick start</h2>
+      <pre class="code"><span class="c">&lt;!-- 1. one script, no dependencies --&gt;</span>
+&lt;<span class="k">script</span> src=<span class="s">"mdgraph.js"</span>&gt;&lt;/<span class="k">script</span>&gt;
+
+&lt;<span class="k">div</span> id=<span class="s">"chart"</span> style=<span class="s">"height:420px"</span>&gt;&lt;/<span class="k">div</span>&gt;
+
+&lt;<span class="k">script</span>&gt;
+  <span class="k">const</span> player = MDGraph.<span class="k">render</span>(<span class="s">'#chart'</span>, <span class="s">`</span>
+<span class="s">    flowchart LR</span>
+<span class="s">      A[Request] --&gt; B{Auth?}</span>
+<span class="s">      B --&gt;|yes| C[Handler]</span>
+<span class="s">      B --&gt;|no| D[Reject]</span>
+<span class="s">      C --&gt; E[(Database)]</span>
+
+<span class="s">      @show A 0.4s</span>
+<span class="s">      @flow A-&gt;B 1s say:"Incoming request"</span>
+<span class="s">      @flow B-&gt;C 1s color:#34d399 say:"Authorized"</span>
+<span class="s">      @pulse E 0.8s color:#fbbf24</span>
+<span class="s">  `</span>, { theme: <span class="s">'dark'</span>, autoplay: <span class="k">true</span> });
+&lt;/<span class="k">script</span>&gt;</pre>
+
+      <h2 style="margin-top:40px">Animation directives</h2>
+      <p class="lead">Add <code>@</code> lines to the source. Each line is one sequential step. Everything is optional except the action and target.</p>
+      <table class="ref">
+        <tr><th>Directive</th><th>What it does</th></tr>
+        <tr><td><code>@show A,B 0.5s</code></td><td>Fade &amp; scale nodes/edges into view.</td></tr>
+        <tr><td><code>@flow A-&gt;B 2s</code></td><td>Animate a glowing particle along the edge (2 seconds).</td></tr>
+        <tr><td><code>@flow A-&gt;B both</code></td><td>Bidirectional flow. Also <code>back</code> for reverse.</td></tr>
+        <tr><td><code>@flow A-&gt;B color:#f80</code></td><td>Custom flow color (hex or CSS name).</td></tr>
+        <tr><td><code>@pulse N 0.8s</code></td><td>Pulse / glow a node to draw attention.</td></tr>
+        <tr><td><code>@color N color:#22d3ee</code></td><td>Permanently recolor a node or edge.</td></tr>
+        <tr><td><code>@focus A,B</code></td><td>Dim everything except the targets. <code>@clear</code> undoes it.</td></tr>
+        <tr><td><code>@hide N</code></td><td>Fade a node/edge out.</td></tr>
+        <tr><td><code>@row 0,1</code></td><td>Reveal table rows by index.</td></tr>
+        <tr><td><code>@show A say:"Any caption"</code></td><td>Show a caption for the step (works on any action).</td></tr>
+      </table>
+
+      <h2 style="margin-top:40px">Node shapes</h2>
+      <table class="ref">
+        <tr><th>Syntax</th><th>Shape</th><th>Syntax</th><th>Shape</th></tr>
+        <tr><td><code>A[Text]</code></td><td>Rectangle</td><td><code>A((Text))</code></td><td>Circle</td></tr>
+        <tr><td><code>A(Text)</code></td><td>Rounded</td><td><code>A{Text}</code></td><td>Diamond</td></tr>
+        <tr><td><code>A([Text])</code></td><td>Stadium</td><td><code>A{{Text}}</code></td><td>Hexagon</td></tr>
+        <tr><td><code>A[(Text)]</code></td><td>Cylinder / DB</td><td><code>A[[Text]]</code></td><td>Subroutine</td></tr>
+        <tr><td><code>A&gt;Text]</code></td><td>Flag</td><td><code>A --&gt; B</code></td><td>Edge</td></tr>
+      </table>
+
+      <h2 style="margin-top:40px">JavaScript API</h2>
+      <pre class="code"><span class="k">const</span> p = MDGraph.<span class="k">render</span>(el, source, options);
+p.<span class="k">play</span>(); p.<span class="k">pause</span>(); p.<span class="k">toggle</span>();
+p.<span class="k">next</span>(); p.<span class="k">prev</span>(); p.<span class="k">seek</span>(3); p.<span class="k">restart</span>();
+p.<span class="k">setSpeed</span>(2);
+p.<span class="k">on</span>(<span class="s">'step'</span>, e =&gt; console.log(e.index, e.step));
+<span class="c">// drive the timeline from code instead of @ directives:</span>
+p.<span class="k">animate</span>([
+  { action:<span class="s">'flow'</span>, targets:<span class="s">'A-&gt;B'</span>, dur:<span class="s">1500</span>, say:<span class="s">'Step one'</span> },
+  { action:<span class="s">'pulse'</span>, targets:<span class="s">'B'</span>, color:<span class="s">'#fbbf24'</span> }
+]);</pre>
+    </section>
+  </main>
+
+  <footer>
+    MDGraph · MIT License · <a href="https://github.com/juanpe500/mdgraphs" id="repoLink2">github.com/juanpe500/mdgraphs</a>
+  </footer>
+
+  <script src="mdgraph.js"></script>
+  <script src="examples.js"></script>
+  <script>
+    var stage = document.getElementById('stage');
+    var src = document.getElementById('src');
+    var themeSel = document.getElementById('theme');
+    var player = null;
+
+    function renderNow(){
+      if(player) player.destroy();
+      try{
+        player = MDGraph.render(stage, src.value, { theme: themeSel.value, autoplay:true, speed:1 });
+      }catch(e){ stage.innerHTML = '<pre style="color:#f87171;padding:16px">'+e.message+'</pre>'; }
+    }
+
+    // examples chips
+    var exWrap = document.getElementById('examples');
+    MDGRAPH_EXAMPLES.forEach(function(ex, i){
+      var b = document.createElement('button');
+      b.className = 'chip' + (i===0?' active':'');
+      b.textContent = ex.name;
+      b.onclick = function(){
+        document.querySelectorAll('.chip').forEach(function(c){c.classList.remove('active')});
+        b.classList.add('active');
+        src.value = ex.code.trim();
+        renderNow();
+      };
+      exWrap.appendChild(b);
+    });
+
+    src.value = MDGRAPH_EXAMPLES[0].code.trim();
+    document.getElementById('renderBtn').onclick = renderNow;
+    themeSel.onchange = renderNow;
+    src.addEventListener('keydown', function(e){
+      if((e.ctrlKey||e.metaKey) && e.key==='Enter'){ e.preventDefault(); renderNow(); }
+    });
+    renderNow();
+
+    // gallery
+    var gal = document.getElementById('gallery');
+    MDGRAPH_EXAMPLES.slice(0,4).forEach(function(ex){
+      var card = document.createElement('div'); card.className='card';
+      var head = document.createElement('div'); head.className='card-head';
+      head.innerHTML = '<h3>'+ex.name+'</h3>';
+      var st = document.createElement('div'); st.className='stage';
+      card.appendChild(head); card.appendChild(st); gal.appendChild(card);
+      MDGraph.render(st, ex.code, { theme: ex.theme||'dark', autoplay:true, controls:true, grid:false });
+    });
+
+    // theme toggle (page)
+    document.getElementById('themeToggle').onclick = function(){
+      var h = document.documentElement;
+      h.setAttribute('data-theme', h.getAttribute('data-theme')==='dark'?'light':'dark');
+    };
+
+    // export SVG
+    document.getElementById('exportSvg').onclick = function(){
+      var svg = stage.querySelector('svg'); if(!svg) return;
+      var data = new XMLSerializer().serializeToString(svg);
+      var blob = new Blob(['<?xml version="1.0"?>\n'+data], {type:'image/svg+xml'});
+      var a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+      a.download = 'mdgraph.svg'; a.click();
+    };
+    document.getElementById('copyEmbed').onclick = function(){
+      var code = '<div id="chart" style="height:420px"></div>\n<script src="mdgraph.js"><\/script>\n<script>\nMDGraph.render("#chart", `\n'+src.value+'\n`, { theme:"'+themeSel.value+'", autoplay:true });\n<\/script>';
+      navigator.clipboard.writeText(code).then(function(){
+        var b=document.getElementById('copyEmbed'); var t=b.textContent; b.textContent='✓ Copied'; setTimeout(function(){b.textContent=t},1200);
+      });
+    };
+  </script>
+</body>
+</html>
