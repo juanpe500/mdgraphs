@@ -26,11 +26,14 @@ animates it** — for slide decks, docs, walkthroughs and explainers.
 
 ## Install
 
-Just copy `mdgraph.js` into your project — that's the whole library.
+Load it straight from the jsDelivr CDN — nothing to build or install:
 
 ```html
-<script src="mdgraph.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/juanpe500/mdgraphs@v1.0.0/mdgraph.js"></script>
 ```
+
+…or copy the single `mdgraph.js` file into your project and use a relative path. Use
+`@latest` instead of `@v1.0.0` to always track the newest version.
 
 Or as an ES module / CommonJS:
 
@@ -46,7 +49,7 @@ const MDGraph = require('./mdgraph.js');
 
 ```html
 <div id="chart" style="height:420px"></div>
-<script src="mdgraph.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/juanpe500/mdgraphs@v1.0.0/mdgraph.js"></script>
 <script>
   const player = MDGraph.render('#chart', `
     flowchart LR

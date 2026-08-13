@@ -148,8 +148,8 @@
     <!-- DOCS -->
     <section class="docs" id="docs">
       <h2>Quick start</h2>
-      <pre class="code"><span class="c">&lt;!-- 1. one script, no dependencies --&gt;</span>
-&lt;<span class="k">script</span> src=<span class="s">"mdgraph.js"</span>&gt;&lt;/<span class="k">script</span>&gt;
+      <pre class="code"><span class="c">&lt;!-- 1. one script, no dependencies (jsDelivr CDN) --&gt;</span>
+&lt;<span class="k">script</span> src=<span class="s">"https://cdn.jsdelivr.net/gh/juanpe500/mdgraphs@v1.0.0/mdgraph.js"</span>&gt;&lt;/<span class="k">script</span>&gt;
 
 &lt;<span class="k">div</span> id=<span class="s">"chart"</span> style=<span class="s">"height:420px"</span>&gt;&lt;/<span class="k">div</span>&gt;
 
@@ -308,7 +308,7 @@ p.<span class="k">animate</span>([
       a.download = 'mdgraph.svg'; a.click();
     };
     document.getElementById('copyEmbed').onclick = function(){
-      var code = '<div id="chart" style="height:420px"></div>\n<script src="mdgraph.js"><\/script>\n<script>\nMDGraph.render("#chart", `\n'+src.value+'\n`, { theme:"'+themeSel.value+'", autoplay:true });\n<\/script>';
+      var code = '<div id="chart" style="height:420px"></div>\n<script src="https://cdn.jsdelivr.net/gh/juanpe500/mdgraphs@v1.0.0/mdgraph.js"><\/script>\n<script>\nMDGraph.render("#chart", `\n'+src.value+'\n`, { theme:"'+themeSel.value+'", autoplay:true });\n<\/script>';
       navigator.clipboard.writeText(code).then(function(){
         var b=document.getElementById('copyEmbed'); var t=b.textContent; b.textContent='✓ Copied'; setTimeout(function(){b.textContent=t},1200);
       });
