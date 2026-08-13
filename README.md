@@ -16,6 +16,7 @@ animates it** — for slide decks, docs, walkthroughs and explainers.
 - 🧩 **Automatic layout** — layered (Sugiyama-style) with crossing reduction; you never place a node
 - 🎨 **5 themes + full overrides** — `dark`, `light`, `neon`, `blueprint`, `mono`
 - 📐 **Rich shapes** — rectangle, rounded, stadium, circle, diamond, hexagon, cylinder, subroutine, flag
+- 🏷️ **Category icons** — 195 [Lucide](https://lucide.dev) icons bundled inline; `:icon:` on any node
 - 📊 **Tables** — Markdown pipe tables render alongside graphs and animate row by row
 - ♿ **Self-contained SVG** — export it, embed it, theme it in light or dark
 
@@ -101,6 +102,43 @@ flowchart LR          # or TB / TD (top-down), BT (bottom-up), RL (right-left)
 
 Declare a node once with a shape; reference it by id afterwards. Multi-word labels can be
 quoted: `A["My label"]`.
+
+### Category icons (Lucide, built in)
+
+Prefix a node's label with `:icon-name:` to stamp a [Lucide](https://lucide.dev/icons/) icon on
+it — a colored badge that reads as a *category*. **195 icons are bundled inline** (no network
+requests, CSP-safe); the badge takes the node's accent color automatically.
+
+```
+flowchart LR
+  A([:user: Client]) --> B{:shield: Auth?}
+  B -->|yes| C[:server: API Handler]
+  C --> D[(:database: Postgres)]
+  C --> E[[:zap: Redis]]
+```
+
+| Option        | Values                         | Effect                                    |
+|---------------|--------------------------------|-------------------------------------------|
+| `iconPos`     | `'top'` (default) · `'inline'` | Badge on the top border, or glyph left of the label |
+| `iconColor`   | any CSS color                  | Force one icon color (default = node accent) |
+
+```js
+MDGraph.render('#chart', src, { iconPos: 'inline' });
+
+// bundled icon names, and add your own:
+MDGraph.iconNames();                 // -> ['user','users','database', ...] (195)
+MDGraph.hasIcon('rocket');           // -> true
+MDGraph.registerIcons({
+  myLogo: '<circle cx="12" cy="12" r="9"/><path d="M12 3v18"/>'  // inner SVG, 24x24 viewBox
+});
+```
+
+Common bundled names: `user` `users` `server` `database` `cloud` `globe` `shield` `shield-check`
+`lock` `key` `zap` `cpu` `code` `terminal` `git-branch` `workflow` `box` `package` `layers` `bell`
+`mail` `send` `clock` `calendar` `file-text` `folder` `search` `filter` `activity` `chart-bar`
+`gauge` `dollar-sign` `credit-card` `shopping-cart` `rocket` `bot` `brain` `sparkles` `flag`
+`check-check` `bug` `wrench` `settings` `heart` `star` `map-pin` `house` `play` `download` `upload`
+… full list via `MDGraph.iconNames()`. Unknown names are ignored gracefully.
 
 ### Edges
 
@@ -210,6 +248,8 @@ p.destroy();
 | `controls`        | `true`    | Show the transport bar                             |
 | `speed`           | `1`       | Playback speed multiplier                          |
 | `grid`            | `true`    | Background grid                                     |
+| `iconPos`         | `'top'`   | `'top'` badge or `'inline'` glyph for category icons |
+| `iconColor`       | accent    | Force a single icon color                          |
 | `autoAnimate`     | `true`    | Auto-generate a timeline when no `@` directives    |
 | `rankSep`         | auto      | Spacing between layers                              |
 | `nodeSep`         | auto      | Spacing between nodes in a layer                    |
@@ -258,6 +298,8 @@ Paste this into a system prompt so a model emits MDGraph-ready diagrams:
 > `{}` decision, `[()]` database, `(())` circle). Connect with `-->`, label with `-->|text|`.
 > Then add `@` animation steps — one per line — to reveal the story: `@show`, `@flow A->B 1s`,
 > `@pulse`, `@focus`, each optionally with `color:#hex` and `say:"caption"`.
+> Give nodes a category icon by prefixing the label with `:icon-name:` using Lucide names,
+> e.g. `A[:server: API]`, `D[(:database: Postgres)]`, `B{:shield: Auth?}`.
 
 ---
 

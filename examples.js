@@ -5,12 +5,12 @@ window.MDGRAPH_EXAMPLES = [
     theme: 'dark',
     code: `
 flowchart LR
-  A([Client]) --> B{Authenticated?}
-  B -->|yes| C[API Handler]
-  B -->|no| D[401 Reject]
-  C --> E[(Database)]
-  C --> F[[Cache]]
-  E --> G((Done))
+  A([:user: Client]) --> B{:shield: Authenticated?}
+  B -->|yes| C[:server: API Handler]
+  B -->|no| D[:ban: 401 Reject]
+  C --> E[(:database: Database)]
+  C --> F[[:zap: Cache]]
+  E --> G((:circle-check: Done))
 
   @show A 0.4s say:"A request arrives"
   @flow A->B 1s say:"Check the token"
@@ -27,13 +27,13 @@ flowchart LR
     theme: 'neon',
     code: `
 flowchart LR
-  A[Commit] --> B[Build]
-  B --> C[Unit tests]
-  C --> D[Integration]
-  D --> E{Passing?}
-  E -->|yes| F([Deploy])
+  A[:git-commit-horizontal: Commit] --> B[:box: Build]
+  B --> C[:check-check: Unit tests]
+  C --> D[:layers: Integration]
+  D --> E{:flag: Passing?}
+  E -->|yes| F([:rocket: Deploy])
   E -->|no| G>Rollback]
-  F --> H((Live))
+  F --> H((:circle-check: Live))
 
   @show A 0.4s
   @flow A->B 0.7s say:"Push triggers the build"
@@ -117,6 +117,32 @@ flowchart LR
   @row 0 0.5s color:rgba(52,211,153,.25)
   @row 1 0.5s color:rgba(251,191,36,.25)
   @row 2 0.5s
+`
+  },
+  {
+    name: 'System architecture',
+    theme: 'blueprint',
+    code: `
+title: System overview
+flowchart LR
+  U[:users: Users] --> W[:globe: Web App]
+  W --> G{:shield-check: API Gateway}
+  G --> S[:server: Service]
+  G --> A[:bot: AI Worker]
+  S --> DB[(:database: Postgres)]
+  S --> C[[:zap: Redis]]
+  A --> Q[:workflow: Queue]
+  S --> M[:mail: Notifier]
+
+  @show U 0.4s say:"Users hit the app"
+  @flow U->W 0.8s
+  @flow W->G 0.8s say:"Authenticate at the gateway"
+  @flow G->S 0.8s color:#7dd3fc
+  @flow G->A 0.8s say:"Async AI work"
+  @flow S->DB 0.8s color:#34d399
+  @flow S->C 0.7s
+  @flow A->Q 0.8s
+  @pulse M 0.8s color:#fbbf24 say:"Notify the user"
 `
   }
 ];

@@ -133,6 +133,7 @@
         <div class="feat"><div class="ico">🧩</div><h4>Auto layout</h4><p>Layered Sugiyama-style layout with crossing reduction. No manual coordinates — just the graph.</p></div>
         <div class="feat"><div class="ico">🎨</div><h4>Themeable</h4><p>Five built-in themes plus full CSS-variable / options overrides. Light and dark ready.</p></div>
         <div class="feat"><div class="ico">📐</div><h4>Rich shapes</h4><p>Rectangles, rounded, stadium, circle, diamond, hexagon, cylinder, subroutine, flag — mermaid-compatible.</p></div>
+        <div class="feat"><div class="ico">🏷️</div><h4>Category icons</h4><p>195 Lucide icons bundled inline. Prefix any label with <code>:icon:</code> for a colored category badge.</p></div>
         <div class="feat"><div class="ico">📊</div><h4>Tables too</h4><p>Markdown pipe tables render alongside graphs and animate row by row for reveals.</p></div>
       </div>
     </section>
@@ -192,6 +193,22 @@
         <tr><td><code>A[(Text)]</code></td><td>Cylinder / DB</td><td><code>A[[Text]]</code></td><td>Subroutine</td></tr>
         <tr><td><code>A&gt;Text]</code></td><td>Flag</td><td><code>A --&gt; B</code></td><td>Edge</td></tr>
       </table>
+
+      <h2 style="margin-top:40px">Category icons <span style="font-size:14px;color:var(--sub)">(Lucide, built in)</span></h2>
+      <p class="lead">Prefix a node label with <code>:icon-name:</code> to stamp a
+        <a href="https://lucide.dev/icons/" target="_blank" rel="noopener">Lucide</a> icon on it — a
+        colored badge that reads as a category. 195 icons are bundled inline (no network requests);
+        the badge takes the node's accent color automatically.</p>
+      <pre class="code"><span class="k">flowchart LR</span>
+  A([<span class="s">:user:</span> Client]) --&gt; B{<span class="s">:shield:</span> Auth?}
+  B --&gt;|yes| C[<span class="s">:server:</span> API Handler]
+  C --&gt; D[(<span class="s">:database:</span> Postgres)]
+  C --&gt; E[[<span class="s">:zap:</span> Redis]]</pre>
+      <p class="lead" style="margin-top:12px">Options: <code>iconPos: 'top'</code> (default badge) or
+        <code>'inline'</code> (glyph left of the label); <code>iconColor</code> to force one color.
+        Add your own with <code>MDGraph.registerIcons({ name: '&lt;svg inner markup&gt;' })</code>.
+        A few of the bundled names:</p>
+      <div id="iconGrid" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px"></div>
 
       <h2 style="margin-top:40px">JavaScript API</h2>
       <pre class="code"><span class="k">const</span> p = MDGraph.<span class="k">render</span>(el, source, options);
@@ -259,6 +276,22 @@ p.<span class="k">animate</span>([
       card.appendChild(head); card.appendChild(st); gal.appendChild(card);
       MDGraph.render(st, ex.code, { theme: ex.theme||'dark', autoplay:true, controls:true, grid:false });
     });
+
+    // icon showcase grid
+    var iconGrid = document.getElementById('iconGrid');
+    if (iconGrid) {
+      var show = ['user','users','server','database','shield-check','lock','key','globe','cloud',
+        'zap','cpu','code','terminal','git-branch','workflow','box','package','layers','bell','mail',
+        'send','clock','calendar','file-text','folder','search','filter','activity','chart-bar','gauge',
+        'dollar-sign','credit-card','shopping-cart','rocket','bot','brain','sparkles','flag','check-check','bug'];
+      show.forEach(function(name){
+        var m = MDGraph.iconMarkup(name); if(!m) return;
+        var chip = document.createElement('span');
+        chip.style.cssText = 'display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--panel);padding:5px 10px;border-radius:8px;font:12px var(--mono);color:var(--sub)';
+        chip.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--accent-2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+m+'</svg>'+name;
+        iconGrid.appendChild(chip);
+      });
+    }
 
     // theme toggle (page)
     document.getElementById('themeToggle').onclick = function(){
