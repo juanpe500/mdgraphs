@@ -101,6 +101,7 @@
               <option value="neon">Neon</option>
               <option value="blueprint">Blueprint</option>
               <option value="mono">Mono</option>
+              <option value="auto">Auto (OS)</option>
             </select>
             <button class="mini" id="renderBtn">▶ Render</button>
           </div>
@@ -134,6 +135,8 @@
         <div class="feat"><div class="ico">🎨</div><h4>Themeable</h4><p>Five built-in themes plus full CSS-variable / options overrides. Light and dark ready.</p></div>
         <div class="feat"><div class="ico">📐</div><h4>Rich shapes</h4><p>Rectangles, rounded, stadium, circle, diamond, hexagon, cylinder, subroutine, flag — mermaid-compatible.</p></div>
         <div class="feat"><div class="ico">🏷️</div><h4>Category icons</h4><p>195 Lucide icons bundled inline. Prefix any label with <code>:icon:</code> for a colored category badge.</p></div>
+        <div class="feat"><div class="ico">🔍</div><h4>Zoom, pan &amp; export</h4><p>Wheel to zoom, drag to pan. One-click PNG/SVG export and WebM screen recording of the animation.</p></div>
+        <div class="feat"><div class="ico">📽️</div><h4>Presentation mode</h4><p>Fullscreen with big captions, subgraph clusters, sequence diagrams, and play-on-scroll for docs.</p></div>
         <div class="feat"><div class="ico">📊</div><h4>Tables too</h4><p>Markdown pipe tables render alongside graphs and animate row by row for reveals.</p></div>
       </div>
     </section>
@@ -149,7 +152,7 @@
     <section class="docs" id="docs">
       <h2>Quick start</h2>
       <pre class="code"><span class="c">&lt;!-- 1. one script, no dependencies (jsDelivr CDN) --&gt;</span>
-&lt;<span class="k">script</span> src=<span class="s">"https://cdn.jsdelivr.net/gh/juanpe500/mdgraphs@v1.0.0/mdgraph.js"</span>&gt;&lt;/<span class="k">script</span>&gt;
+&lt;<span class="k">script</span> src=<span class="s">"https://cdn.jsdelivr.net/gh/juanpe500/mdgraphs@v1.1.0/mdgraph.js"</span>&gt;&lt;/<span class="k">script</span>&gt;
 
 &lt;<span class="k">div</span> id=<span class="s">"chart"</span> style=<span class="s">"height:420px"</span>&gt;&lt;/<span class="k">div</span>&gt;
 
@@ -210,6 +213,43 @@
         A few of the bundled names:</p>
       <div id="iconGrid" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px"></div>
 
+      <h2 style="margin-top:40px">Subgraphs (clusters)</h2>
+      <p class="lead">Group nodes into labeled containers with <code>subgraph … end</code> — great for
+        "frontend / backend / infra" architecture views.</p>
+      <pre class="code"><span class="k">flowchart LR</span>
+  subgraph Frontend
+    U[:users: Users] --&gt; W[:globe: Web]
+  end
+  subgraph Backend
+    S[:server: API] --&gt; DB[(:database: DB)]
+  end
+  W --&gt; S</pre>
+
+      <h2 style="margin-top:40px">Sequence diagrams</h2>
+      <p class="lead">Start the source with <code>sequenceDiagram</code>. Messages animate one by one —
+        perfect for walkthroughs.</p>
+      <pre class="code"><span class="k">sequenceDiagram</span>
+  participant U as User
+  participant A as App
+  participant S as Server
+  U-&gt;&gt;A: Click login       <span class="c">// solid arrow</span>
+  A-&gt;&gt;S: POST /auth
+  S--&gt;&gt;A: 200 token         <span class="c">// dashed return</span>
+  Note over A,S: cached 15 min</pre>
+
+      <h2 style="margin-top:40px">Viewer controls</h2>
+      <table class="ref">
+        <tr><th>Control</th><th>How</th></tr>
+        <tr><td>Zoom &amp; pan</td><td>Mouse wheel to zoom, drag to pan; toolbar <code>＋ － ⤢</code> or keys <code>+ - 0</code></td></tr>
+        <tr><td>Export PNG / SVG</td><td>Toolbar <code>🖼</code> button, or <code>player.exportPNG()</code> / <code>exportSVG()</code></td></tr>
+        <tr><td>Record video</td><td>Toolbar <code>⏺</code> records the animation to a WebM file (<code>player.record()</code>)</td></tr>
+        <tr><td>Presentation</td><td>Toolbar <code>⛶</code> or key <code>F</code> for fullscreen with big captions</td></tr>
+        <tr><td>Play on scroll</td><td><code>{ playOnView: true }</code> — animates when scrolled into view</td></tr>
+        <tr><td>Auto theme</td><td><code>{ theme: 'auto' }</code> follows the OS light/dark setting</td></tr>
+      </table>
+      <p class="lead" style="margin-top:10px">Motion respects <code>prefers-reduced-motion</code> automatically
+        (shows the final state without animating).</p>
+
       <h2 style="margin-top:40px">JavaScript API</h2>
       <pre class="code"><span class="k">const</span> p = MDGraph.<span class="k">render</span>(el, source, options);
 p.<span class="k">play</span>(); p.<span class="k">pause</span>(); p.<span class="k">toggle</span>();
@@ -220,7 +260,12 @@ p.<span class="k">on</span>(<span class="s">'step'</span>, e =&gt; console.log(e
 p.<span class="k">animate</span>([
   { action:<span class="s">'flow'</span>, targets:<span class="s">'A-&gt;B'</span>, dur:<span class="s">1500</span>, say:<span class="s">'Step one'</span> },
   { action:<span class="s">'pulse'</span>, targets:<span class="s">'B'</span>, color:<span class="s">'#fbbf24'</span> }
-]);</pre>
+]);
+<span class="c">// viewer:</span>
+p.<span class="k">zoomBy</span>(1.2); p.<span class="k">resetView</span>();
+p.<span class="k">exportPNG</span>(); p.<span class="k">exportSVG</span>();
+p.<span class="k">record</span>();            <span class="c">// -> WebM download</span>
+p.<span class="k">toggleFullscreen</span>();</pre>
     </section>
   </main>
 
@@ -308,7 +353,7 @@ p.<span class="k">animate</span>([
       a.download = 'mdgraph.svg'; a.click();
     };
     document.getElementById('copyEmbed').onclick = function(){
-      var code = '<div id="chart" style="height:420px"></div>\n<script src="https://cdn.jsdelivr.net/gh/juanpe500/mdgraphs@v1.0.0/mdgraph.js"><\/script>\n<script>\nMDGraph.render("#chart", `\n'+src.value+'\n`, { theme:"'+themeSel.value+'", autoplay:true });\n<\/script>';
+      var code = '<div id="chart" style="height:420px"></div>\n<script src="https://cdn.jsdelivr.net/gh/juanpe500/mdgraphs@v1.1.0/mdgraph.js"><\/script>\n<script>\nMDGraph.render("#chart", `\n'+src.value+'\n`, { theme:"'+themeSel.value+'", autoplay:true });\n<\/script>';
       navigator.clipboard.writeText(code).then(function(){
         var b=document.getElementById('copyEmbed'); var t=b.textContent; b.textContent='✓ Copied'; setTimeout(function(){b.textContent=t},1200);
       });

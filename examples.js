@@ -126,12 +126,18 @@ flowchart LR
 title: System overview
 flowchart LR
   U[:users: Users] --> W[:globe: Web App]
-  W --> G{:shield-check: API Gateway}
-  G --> S[:server: Service]
-  G --> A[:bot: AI Worker]
-  S --> DB[(:database: Postgres)]
-  S --> C[[:zap: Redis]]
-  A --> Q[:workflow: Queue]
+  subgraph Edge
+    W --> G{:shield-check: API Gateway}
+  end
+  subgraph Services
+    G --> S[:server: Service]
+    G --> A[:bot: AI Worker]
+  end
+  subgraph Data
+    S --> DB[(:database: Postgres)]
+    S --> C[[:zap: Redis]]
+    A --> Q[:workflow: Queue]
+  end
   S --> M[:mail: Notifier]
 
   @show U 0.4s say:"Users hit the app"
@@ -143,6 +149,25 @@ flowchart LR
   @flow S->C 0.7s
   @flow A->Q 0.8s
   @pulse M 0.8s color:#fbbf24 say:"Notify the user"
+`
+  },
+  {
+    name: 'Sequence: login',
+    theme: 'dark',
+    code: `
+sequenceDiagram
+  title: Login flow
+  participant U as User
+  participant A as App
+  participant S as Auth Server
+  participant D as Database
+  U->>A: Enter credentials
+  A->>S: POST /login
+  S->>D: Lookup user
+  D-->>S: user record
+  S-->>A: 200 + JWT
+  Note over A,S: token cached 15 min
+  A->>U: Redirect to dashboard
 `
   }
 ];

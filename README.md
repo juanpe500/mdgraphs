@@ -1,5 +1,8 @@
 # MDGraph
 
+[![CI](https://github.com/juanpe500/mdgraphs/actions/workflows/ci.yml/badge.svg)](https://github.com/juanpe500/mdgraphs/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 **Standalone, zero-dependency JavaScript for animated Markdown-style diagrams.**
 
 MDGraph turns a Markdown/mermaid-flavoured graph definition into an **animated SVG**
@@ -18,7 +21,10 @@ animates it** — for slide decks, docs, walkthroughs and explainers.
 - 📐 **Rich shapes** — rectangle, rounded, stadium, circle, diamond, hexagon, cylinder, subroutine, flag
 - 🏷️ **Category icons** — 195 [Lucide](https://lucide.dev) icons bundled inline; `:icon:` on any node
 - 📊 **Tables** — Markdown pipe tables render alongside graphs and animate row by row
-- ♿ **Self-contained SVG** — export it, embed it, theme it in light or dark
+- 🗂️ **Subgraphs & sequence diagrams** — labeled clusters, plus `sequenceDiagram` with message-by-message animation
+- 🔍 **Zoom, pan & export** — wheel/drag navigation; one-click **PNG / SVG / WebM** export
+- 📽️ **Presentation mode** — fullscreen with big captions; play-on-scroll for docs; `prefers-reduced-motion` aware
+- ♿ **Self-contained SVG** — export it, embed it, theme it in light, dark, or `auto`
 
 **[▶ Live studio & docs](https://juanpe500.github.io/mdgraphs/)**
 
@@ -29,11 +35,11 @@ animates it** — for slide decks, docs, walkthroughs and explainers.
 Load it straight from the jsDelivr CDN — nothing to build or install:
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/juanpe500/mdgraphs@v1.0.0/mdgraph.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/juanpe500/mdgraphs@v1.1.0/mdgraph.js"></script>
 ```
 
 …or copy the single `mdgraph.js` file into your project and use a relative path. Use
-`@latest` instead of `@v1.0.0` to always track the newest version.
+`@latest` instead of `@v1.1.0` to always track the newest version.
 
 Or as an ES module / CommonJS:
 
@@ -49,7 +55,7 @@ const MDGraph = require('./mdgraph.js');
 
 ```html
 <div id="chart" style="height:420px"></div>
-<script src="https://cdn.jsdelivr.net/gh/juanpe500/mdgraphs@v1.0.0/mdgraph.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/juanpe500/mdgraphs@v1.1.0/mdgraph.js"></script>
 <script>
   const player = MDGraph.render('#chart', `
     flowchart LR
@@ -176,6 +182,40 @@ classDef critical fill:#7f1d1d,stroke:#f87171,color:#fff
 class B,D critical
 ```
 
+### Subgraphs (clusters)
+
+Group nodes into labeled containers — ideal for architecture diagrams:
+
+```
+flowchart LR
+  subgraph Frontend
+    U[:users: Users] --> W[:globe: Web]
+  end
+  subgraph Backend
+    S[:server: API] --> DB[(:database: DB)]
+  end
+  W --> S
+```
+
+### Sequence diagrams
+
+Start the source with `sequenceDiagram`. Each message animates in order — great for walkthroughs.
+
+```
+sequenceDiagram
+  title: Login flow
+  participant U as User
+  participant A as App
+  participant S as Server
+  U->>A: Click login        # solid arrow
+  A->>S: POST /auth
+  S-->>A: 200 token          # dashed return
+  Note over A,S: cached 15 min
+  A->>U: Redirect
+```
+
+Arrows: `->>` solid arrowhead · `-->>` dashed return · `->` / `-->` plain line · `-x` cross · `-)` async.
+
 ---
 
 ## Animation directives
@@ -227,6 +267,12 @@ p.play();  p.pause();  p.toggle();
 p.next();  p.prev();   p.seek(3);   p.restart();
 p.setSpeed(2);
 
+// viewer
+p.zoomBy(1.2);  p.resetView();
+p.exportPNG();  p.exportSVG();   // download files
+p.record();                      // record the animation -> WebM download
+p.toggleFullscreen();            // presentation mode
+
 // events
 p.on('step',  e => console.log(e.index, e.step));
 p.on('end',   () => console.log('done'));
@@ -246,8 +292,12 @@ p.destroy();
 
 | Option            | Default   | Description                                        |
 |-------------------|-----------|----------------------------------------------------|
-| `theme`           | `'dark'`  | `dark` · `light` · `neon` · `blueprint` · `mono`   |
+| `theme`           | `'dark'`  | `dark` · `light` · `neon` · `blueprint` · `mono` · `auto` |
 | `autoplay`        | `false`   | Start playing immediately                          |
+| `playOnView`      | `false`   | Start when scrolled into view (IntersectionObserver) |
+| `zoom`            | `true`    | Enable wheel-zoom / drag-pan                        |
+| `exportButtons`   | `true`    | Show zoom/PNG/record/fullscreen buttons in the toolbar |
+| `respectReducedMotion` | `true` | Skip animation when the OS asks to reduce motion |
 | `controls`        | `true`    | Show the transport bar                             |
 | `speed`           | `1`       | Playback speed multiplier                          |
 | `grid`            | `true`    | Background grid                                     |
