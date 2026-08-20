@@ -1,16 +1,33 @@
-# MDGraph
+<div align="center">
 
-[![CI](https://github.com/juanpe500/mdgraphs/actions/workflows/ci.yml/badge.svg)](https://github.com/juanpe500/mdgraphs/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+<img src="assets/hero.png" alt="MDGraph — turn Markdown-style graph definitions into animated SVG diagrams" width="100%">
 
-**Standalone, zero-dependency JavaScript for animated Markdown-style diagrams.**
+<p>
+  <a href="https://github.com/juanpe500/mdgraphs/actions/workflows/ci.yml"><img src="https://github.com/juanpe500/mdgraphs/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-3fb950?style=flat-square" alt="MIT License"></a>
+  <img src="https://img.shields.io/badge/dependencies-0-22d3ee?style=flat-square" alt="Zero dependencies">
+  <img src="https://img.shields.io/badge/one%20file-118%20KB-7c8cff?style=flat-square" alt="One file">
+  <img src="https://img.shields.io/badge/icons-195%20Lucide-fbbf24?style=flat-square" alt="195 Lucide icons">
+</p>
 
-MDGraph turns a Markdown/mermaid-flavoured graph definition into an **animated SVG**
-that plays like a presentation — reveal nodes step by step, send glowing particles
-flowing along edges, pulse, focus, recolor, and narrate each step with captions.
+<b>Standalone, zero-dependency JavaScript for animated Markdown-style diagrams.</b><br>
+Turn a mermaid-flavoured graph definition into an <b>animated SVG</b> that plays like a presentation.
 
-It's designed for a specific workflow: **an AI writes the diagram, MDGraph renders and
-animates it** — for slide decks, docs, walkthroughs and explainers.
+<a href="https://juanpe500.github.io/mdgraphs/"><b>▶ Live studio &amp; docs</b></a> ·
+<a href="#quick-start">Quick start</a> ·
+<a href="#diagram-syntax">Syntax</a> ·
+<a href="#animation-directives">Directives</a>
+
+</div>
+
+---
+
+MDGraph turns a Markdown/mermaid-flavoured graph definition into an **animated SVG** that plays like
+a presentation — reveal nodes step by step, send glowing particles flowing along edges, pulse, focus,
+recolor, and narrate each step with captions.
+
+It's designed for a specific workflow: **an AI writes the diagram, MDGraph renders and animates it** —
+for slide decks, docs, walkthroughs and explainers.
 
 > One file. No build step. No dependencies. Drop in a `<script>` tag and go.
 
@@ -24,9 +41,26 @@ animates it** — for slide decks, docs, walkthroughs and explainers.
 - 🗂️ **Subgraphs & sequence diagrams** — labeled clusters, plus `sequenceDiagram` with message-by-message animation
 - 🔍 **Zoom, pan & export** — wheel/drag navigation; one-click **PNG / SVG / WebM** export
 - 📽️ **Presentation mode** — fullscreen with big captions; play-on-scroll for docs; `prefers-reduced-motion` aware
-- ♿ **Self-contained SVG** — export it, embed it, theme it in light, dark, or `auto`
 
-**[▶ Live studio & docs](https://juanpe500.github.io/mdgraphs/)**
+---
+
+## Gallery
+
+One syntax, five themes, every shape and icon — all rendered by the same 118 KB file, no network requests.
+
+<img src="assets/gallery.png" alt="Four MDGraph diagrams across the dark, neon, blueprint and light themes: a request flow, a CI/CD pipeline, a clustered system architecture, and a state machine" width="100%">
+
+**Write the graph on the left, watch it render and animate on the right** — that's the whole studio.
+Every node, edge, icon and caption is driven by the plain-text definition.
+
+<img src="assets/studio.png" alt="The MDGraph studio: a source panel with a highlighted diagram definition next to its live-rendered preview" width="100%">
+
+Sequence diagrams too — start the source with `sequenceDiagram` and each message animates in order.
+
+<img src="assets/sequence.png" alt="An MDGraph sequence diagram of a login flow with participants, lifelines, solid and dashed messages, and a note" width="100%">
+
+> Every image above is the library's **actual SVG output** — export any of them as PNG or SVG straight
+> from the toolbar, or record the animation to WebM.
 
 ---
 
